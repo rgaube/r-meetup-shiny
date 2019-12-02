@@ -1,0 +1,449 @@
+---
+title: "R/Shiny Workshop"
+author: "Daniel Krieg"
+date: "10. Dezember 2019"
+output: html_notebook
+runtime: shiny
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+
+page_style <- "background-color:rgb(0,170,112,0.3);"
+
+source("solutions.R", local=TRUE)
+```
+
+
+**Agenda**
+
+* Intro
+* Basic structure
+* Reactive programming
+
+
+
+# Introduction
+
+## What is Shiny
+
+A shiny app is a webbased user interface, which is created and connected to an active R session.
+The session can react to user interaction and create/update content interactively.
+
+### Pros
+
+* No HTML knowledge required (while the basics might be helpful)
+* Shiny is easy to learn and install
+* Yields quick results for simple applications
+* Can also be scaled for complex applications
+* Use the full power of R for data processing and graphics
+
+
+## Preparation
+
+
+
+```{r echo=TRUE, eval=FALSE}
+
+# Shiny
+install.packages("shiny")
+
+# Datatable: Nice interactive tables
+install.packages("DT")
+
+# Visualisations: 
+install.packages("ggplot2")
+install.packages("leaflet")
+
+# Deploy to shinyapps
+install.packages("rsconnect")
+
+# Dashboard layout for Shiny
+install.packages("shinydashboard")
+
+# Themes for dashboards
+install.packages("devtools")
+devtools::install_github("nik01010/dashboardthemes")
+```
+
+```{r}
+library(shiny)
+library(shinydashboard)
+
+```
+
+
+# Basic structure
+
+Create a file *app.R* containing 
+
+* a variable `ui` describing the user interface (input and output elements)
+* a function `server` to handle the user interaction (via `input`) and dynamically update the content (via `output`)
+* a call to `shinyApp`
+
+## Minimal example
+
+```{r}
+ui <- fluidPage(title = "Das ist der Browsertabtitel",
+                h3("Erste leere Seite"),
+                style=page_style)
+
+server <- function(input, output, session) {}
+
+shinyApp(ui = ui, server = server)
+```
+
+
+## Inputs
+
+```{r}
+library(shiny)
+
+ui <- fluidPage(style=page_style,
+      h3("Action Button"), 
+      actionButton("action", label = "Action"),
+      hr(),
+      
+      textInput("text", label = h3("Text input"), value = "Enter text..."),
+      hr(),
+      
+      h3("Checkbox"),
+      checkboxInput("checkbox", label = "Choice A", value = TRUE),
+      hr(),
+      
+      checkboxGroupInput("checkGroup",
+                         label = h3("Checkbox group"),
+                         choices = list("Choice 1" = 1,"Choice 2" = 2,"Choice 3" = 3),
+                         selected = 1),
+      hr(),
+      
+      radioButtons("radio",
+                   label = h3("Radio buttons"),
+                   choices = list("Choice 1" = 1,"Choice 2" = 2,"Choice 3" = 3),
+                   selected = 1),
+      hr(),
+      
+      selectInput("select",
+                  label = h3("Select box"),
+                  choices = list("Choice 1" = 1,"Choice 2" = 2,"Choice 3" = 3),
+                  selected = 1),
+      hr(),
+      
+      numericInput("num",
+                   label = h3("Numeric input"),
+                   value = 1, min=0, max=10),
+      hr(),
+      
+      sliderInput("slider1",label = h3("Slider"),min = 0,max = 100,value = 50),
+      hr(), 
+      
+      sliderInput("slider2",label = h3("Slider Range"),min = 0,max = 100,value = c(40, 60))
+    
+  )
+
+shinyApp(ui = ui, server = function(...){})
+```
+
+## Outputs
+
+The content is generated in the *server* function by assign to elements of the `output` list.
+Every `<obj>Output` in the *ui* has a corresponding `render<Obj>` function on the *server* side.
+
+```{r}
+
+library(shiny)
+library(dplyr)
+library(ggplot2)
+
+ui <- fluidPage(style=page_style,
+      h3("Plot output"), 
+      plotOutput("plot"),
+      hr(),
+      
+      h3("Table output"), 
+      tableOutput("table"),
+      hr(),
+      
+      h3("Data table output"), 
+      dataTableOutput("datatable"),
+      hr()
+)
+
+server <- function(input, output, session) {
+  
+  output$plot <- renderPlot({
+    data <- mtcars %>% 
+      mutate(cyl = as.factor(cyl))
+    ggplot(data, aes(qsec, mpg, color=cyl)) + geom_point()
+  })
+  
+  output$table <- renderTable(head(mtcars, 10))
+  
+  output$datatable <- renderDataTable(mtcars, options = list(pageLength = 5))
+}
+      
+shinyApp(ui = ui, server = server)
+
+```
+
+
+
+**Try it**:
+Create a page for displaying a monte carlo simulation of stock prices.
+
+Tip: Start constructing the ui first and render the plots in the server function by generating paths from fixed parameters, like:
+
+```{r}
+mean_return <- 0.05
+volatility <- 0.1
+iterations <- 100
+
+price_paths <- simulate_paths(iterations, mean_return, volatility)
+  
+```
+
+
+```{r}
+
+
+library(shiny)
+library(dplyr)
+
+shinyApp(ex1_ui, ex1_server_fixed)
+
+```
+
+
+
+
+
+## Layout
+
+A good introduction is given in the [Layout guide](https://shiny.rstudio.com/articles/layout-guide.html). 
+
+### Grid
+
+The basic layout is grid based (`fluidPage()`) and constructed row by row (`fluidRow()`) with nested columns (`columns()`)
+
+
+```{r}
+library(shiny)
+
+ui <- fluidPage(style=page_style,
+  fluidRow(
+    column(2, "just text"),
+    column(4, wellPanel(h3("Well panel with header"), "and content")),
+    column(6, div("A div", style="background-color:#aa2222"))
+  )
+)
+
+shinyApp(ui=ui, server = function(...){})
+
+```
+
+
+### Tabs and navigation
+
+
+
+```{r}
+
+page_1 <- fluidPage(style=page_style,
+  titlePanel("Hello Shiny!"),
+  
+  
+)
+
+page_2 <- fluidPage(style=page_style,
+  tabsetPanel(
+    tabPanel("Plot", wellPanel("Plot Content")), 
+    tabPanel("Summary", wellPanel("Summary Content")), 
+    tabPanel("Table", wellPanel("Table Content"))
+  )
+)
+
+page_3 <- fluidPage(style=page_style,
+  navlistPanel(
+    "Output",
+    tabPanel("Plot", wellPanel("Plot Content")), 
+    "Data",
+    tabPanel("Summary", wellPanel("Summary Content")), 
+    tabPanel("Table", wellPanel("Table Content"))
+  )
+)
+
+
+
+ui <- navbarPage("My Application",
+                 tabPanel("Start", page_1),
+                 tabPanel("Tabs", page_2),
+                 tabPanel("NavLists", page_3)
+)
+
+
+shinyApp(ui=ui, server = function(...){})
+
+
+```
+
+
+**Try it:** Reuse the code from the monte carlo example and modify it.
+Put the inputs side by side (Hint: use `column`) and the outputs in tabs (Hint: use `tabsetPanel` and `tabPanel`).
+
+```{r}
+
+
+library(shiny)
+library(dplyr)
+
+shinyApp(ex2_ui, ex1_server_fixed)
+
+```
+
+
+# Reactive Programming
+
+In order to create an interactive and efficient UI, the server needs to
+
+* read the inputs (reactive sources) from `input`
+* optionally calculate intermediate objects for further use (reactive conducters)
+* be able to recognize if anything changed and which are the dependent objects (invalidation)
+* and update only the relevant output (reactive endpoint) via `output`
+
+To employ the input values from the UI within the server side, refer to them via the `input` list.
+They are no Base R objects, but so-called reactive expressions. They know on which other reactive source they depend. You need to evaluate them within in reactive context (e.g. `renderText`).
+
+## Reactive sources and endpoints 
+
+Open the examples in a regular browser and press *Ctrl+F3* to open the reactlog.
+
+```{r}
+library(shiny) 
+
+options(shiny.reactlog=TRUE) 
+
+ui <- fluidPage(
+  textInput("text_input", "Text"),
+  verbatimTextOutput("text_output"))
+
+server <- function(input, output, session) {
+  
+  # Not working:
+  # output$text_output <- input$text_input
+  
+  output$text_output <- renderText({
+    paste("my text:", input$text_input)
+  })
+
+}
+
+shinyApp(ui, server)
+
+```
+
+
+## Reactive conducters
+
+Conducters are reactive objects which depend on reactive input and have other objects depending on them.
+
+```{r}
+library(shiny) 
+
+options(shiny.reactlog=TRUE) 
+
+ui <- fluidPage(
+  textInput("text_input", "Text"),
+  actionButton("update", "Update"),
+  verbatimTextOutput("text_output"),
+  verbatimTextOutput("text_output2"))
+
+server <- function(input, output, session) {
+  
+  # Create a new reactive conducter
+  doubled_text <- reactive({
+    paste(input$text_input, input$text_input)
+  })
+  
+  output$text_output2 <- renderText({
+    # Not working:
+    # doubled_text
+    
+    # Notice the brackets
+    paste("my doubled text:", doubled_text())
+  })
+  
+  ## Create a reactive conducter depending on another source
+  
+  text_delayed <- eventReactive(input$update, {input$text_input}  )
+  
+  output$text_output <- renderText({
+    paste("my delayed text:", text_delayed())
+  })
+  
+  
+  
+}
+
+shinyApp(ui, server)
+
+```
+
+
+**Try it**:
+
+Reuse the monte carlo example, but this time create a reactive conducter, which holds the simulated paths and depends on the inputs.
+
+```{r}
+
+
+library(shiny)
+library(dplyr)
+
+shinyApp(ex2_ui, ex1_server_reactive)
+
+
+```
+
+
+
+
+
+
+
+```{r}
+
+ui <- navbarPage("My Application",
+                 tabPanel("Page 1", uiOutput("page")),
+                 tabPanel("Page 2", 
+                          conditionalPanel(
+                            condition = "input.next > input.back",
+                            actionButton("back", "Back")),
+                          actionButton("next", "Next"),
+                          conditionalPanel(
+                            condition = "input.next - input.back == 1",
+                            h3("Step 1")
+                          ),
+                          conditionalPanel(
+                            condition = "input.next - input.back == 2",
+                            h3("Step 2")
+                          ))
+)
+
+server <- function(input, output, session) {
+  
+  output$page <- renderUI({
+     tagList(
+      sliderInput("n", "N", 1, 1000, 500),
+      textInput("label", "Label")
+    )
+  })
+  
+  
+}
+
+shinyApp(ui=ui, server = server)
+
+```
+
+
+
