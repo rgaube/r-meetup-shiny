@@ -2,26 +2,20 @@
 title: "R/Shiny Workshop"
 author: "Daniel Krieg"
 date: "10. Dezember 2019"
-output: html_notebook
+output: 
+  rmdformats::material:
+    highlight: kate
+    css: style.css
+  html_document:
+    css: style.css
 runtime: shiny
 ---
 
-```{r setup, include=FALSE}
+```{r setup, include=FALSE, message=FALSE}
 knitr::opts_chunk$set(echo = TRUE)
-
-page_style <- "background-color:rgb(0,170,112,0.3);"
 
 source("solutions.R", local=TRUE)
 ```
-
-
-**Agenda**
-
-* Intro
-* Basic structure
-* Reactive programming
-
-
 
 # Introduction
 
@@ -64,12 +58,6 @@ install.packages("shinydashboard")
 # Themes for dashboards
 install.packages("devtools")
 devtools::install_github("nik01010/dashboardthemes")
-```
-
-```{r}
-library(shiny)
-library(shinydashboard)
-
 ```
 
 
@@ -144,6 +132,23 @@ ui <- fluidPage(style=page_style,
 shinyApp(ui = ui, server = function(...){})
 ```
 
+
+> Try it
+
+We will create a page for displaying a monte carlo simulation of stock prices.
+
+Start by constructing the inputs first:
+
+```{r}
+
+
+library(shiny)
+library(dplyr)
+
+shinyApp(ex1_ui, function(...){})
+
+```
+
 ## Outputs
 
 The content is generated in the *server* function by assign to elements of the `output` list.
@@ -188,10 +193,10 @@ shinyApp(ui = ui, server = server)
 
 
 
-**Try it**:
-Create a page for displaying a monte carlo simulation of stock prices.
+> Try it
 
-Tip: Start constructing the ui first and render the plots in the server function by generating paths from fixed parameters, like:
+Now add the outputs and render the plots in the server function.
+Hint: Start by generating paths from fixed parameters, like:
 
 ```{r}
 mean_return <- 0.05
@@ -287,7 +292,9 @@ shinyApp(ui=ui, server = function(...){})
 ```
 
 
-**Try it:** Reuse the code from the monte carlo example and modify it.
+> Try it
+
+Reuse the code from the monte carlo example and modify it.
 Put the inputs side by side (Hint: use `column`) and the outputs in tabs (Hint: use `tabsetPanel` and `tabPanel`).
 
 ```{r}
@@ -315,7 +322,7 @@ They are no Base R objects, but so-called reactive expressions. They know on whi
 
 ## Reactive sources and endpoints 
 
-Open the examples in a regular browser and press *Ctrl+F3* to open the reactlog.
+**Hint:** Open the examples in a regular browser and press *Ctrl+F3* to open the reactlog.
 
 ```{r}
 library(shiny) 
@@ -344,7 +351,7 @@ shinyApp(ui, server)
 
 ## Reactive conducters
 
-Conducters are reactive objects which depend on reactive input and have other objects depending on them.
+Conducters are reactive objects which depend on reactive input and have other reactive conducters and endpoints depending on them.
 
 ```{r}
 library(shiny) 
@@ -389,7 +396,7 @@ shinyApp(ui, server)
 ```
 
 
-**Try it**:
+> Try it
 
 Reuse the monte carlo example, but this time create a reactive conducter, which holds the simulated paths and depends on the inputs.
 
@@ -405,8 +412,62 @@ shinyApp(ex2_ui, ex1_server_reactive)
 ```
 
 
+### Relevant reactive functions
+
+Conducters:
+
+* `reactive(expr, ...)`:
+Creates a reactive conducter which invalidates on *expr*
+* `eventReactive(eventExpr, valueExpr, ...)`:
+Creates reactive expression with code in *valueExpr* that only invalidates when reactive values in *eventExpr* change.
+* `isolate(expr)`:
+Runs a code block. Returns a non-reactive copy of the results, i.e. no invalidation dependency.
+
+Endpoints:
+
+* `observe(expr, ...)`:
+Runs code *expr* when reactive values change
+* `observeEvent(eventExpr, handlerExpr)`: 
+Runs code in *handlerExpr* when reactive values in *eventExpr* change. 
+
+Delays:
+
+* `throttle(expr, d)`: Delay invalidation such that it does not takes place more often than every *d* milliseconds
+* `debounce(expr, d)`: Prevent multiple invalidations until no invalidation happend within a time frame of *d* milliseconds
 
 
+
+> Try it
+
+Plotting the paths is the expensive part if iterations are large. 
+Add a button to refresh the paths if the inputs change.
+
+*Hint*: Start with the button and toggle its state. Then use the button for updating the plot.
+
+```{r}
+
+
+library(shiny)
+library(dplyr)
+
+shinyApp(ex3_ui, ex3_server_reactive)
+
+
+```
+
+
+
+
+
+# Ressources
+
+- [RStudio Layout guide](https://shiny.rstudio.com/articles/layout-guide.html)
+- [RStudio Shiny Cheat Sheet](https://shiny.rstudio.com/articles/cheatsheet.html)
+
+
+
+
+# Backup
 
 
 
@@ -415,6 +476,7 @@ shinyApp(ex2_ui, ex1_server_reactive)
 ui <- navbarPage("My Application",
                  tabPanel("Page 1", uiOutput("page")),
                  tabPanel("Page 2", 
+                          fluidPage(
                           conditionalPanel(
                             condition = "input.next > input.back",
                             actionButton("back", "Back")),
@@ -426,7 +488,7 @@ ui <- navbarPage("My Application",
                           conditionalPanel(
                             condition = "input.next - input.back == 2",
                             h3("Step 2")
-                          ))
+                          )))
 )
 
 server <- function(input, output, session) {
