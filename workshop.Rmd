@@ -55,9 +55,10 @@ install.packages("rsconnect")
 # Dashboard layout for Shiny
 install.packages("shinydashboard")
 
+# Themes for markdown document
+remotes::install_github("juba/rmdformats")
 # Themes for dashboards
-install.packages("devtools")
-devtools::install_github("nik01010/dashboardthemes")
+remotes::install_github("nik01010/dashboardthemes")
 ```
 
 
@@ -307,6 +308,55 @@ shinyApp(ex2_ui, ex1_server_fixed)
 
 ```
 
+## Dashboards
+
+Creating an application as a dashboard is straight forward. Just use the `shinydashboard` package.
+
+The general UI structure is setup with `dashboardPage`. 
+The pages are constructed as before, but they have some additional UI elements like `box` and `infoBox`.
+
+```{r}
+library(shiny)
+library(shinydashboard)
+
+#### Pages
+
+tab_overview <- fluidPage(
+  box(title="Main Parameters", solidHeader = TRUE, status="primary",
+      sliderInput("test_slider", "Volume", 0,10,5),
+      checkboxInput("test_check", "Loudness?")),
+  box(title="Secondary Parameters", 
+      textInput("test_text", "Name:")),
+)
+
+tab_details <- fluidPage(h3("Output"),
+                         infoBox("Performance", "95%", "Overall KPI coverage"))
+
+
+#### Dashboard structure
+
+header <- dashboardHeader(title="My Dashboard")
+
+sidebar <- dashboardSidebar(
+  sidebarMenu(
+    menuItem("Übersicht", tabName = "overview", icon = icon("dashboard")),
+    menuItem("Details", tabName = "details", icon = icon("map"))
+  )
+)
+
+body <- dashboardBody(
+  tabItems(
+    tabItem(tabName = "overview", tab_overview),
+    tabItem(tabName = "details", tab_details)
+  )
+)
+
+
+
+ui <- dashboardPage(header, sidebar, body)
+
+shinyApp(ui, server=function(input, output) {})
+```
 
 # Reactive Programming
 
@@ -465,11 +515,15 @@ Therefore, as applications get bigger and more complex, you need
 * modular code
 * automated testing
 
-Especially for a reactive user interface application like Shiny, testing can be very time consuming.
+
+## Modules
+
+ TODO
+
 
 ## Shinytest
 
-The *shinytest* package offers an automated testing based on a scripted interaction with the application.
+Especially for a reactive user interface application like Shiny, testing can be very time consuming. The *shinytest* package offers an automated testing based on a scripted interaction with the application.
 
 In addition to the package, you need the external application *phantomJS* installed and in your path.
 
