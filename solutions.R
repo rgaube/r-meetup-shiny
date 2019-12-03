@@ -16,7 +16,8 @@ draw_price_path <- function(mean_return, volatility,
                             start=100, 
                             duration=1, days_per_period=250,
                             seed=NULL) {
-  set.seed(seed = seed)
+  if (!missing(seed))
+    set.seed(seed = seed)
   
   tibble::tibble(day = seq(days_per_period),
                  period = day %% days_per_period,
@@ -158,6 +159,10 @@ ex1_server_reactive <- function(input, output, session) {
     })
 }
 
+
+button_labels <- list(replot="Replot",
+                      ok="Up-to-date")
+
 ex3_server_reactive <- function(input, output, session) {
   
   library(ggplot2)
@@ -171,10 +176,14 @@ ex3_server_reactive <- function(input, output, session) {
     simulate_paths(input$iterations, input$mean_return, input$volatility)})
   
   observeEvent(price_paths(), {
-    updateActionButton(session, "replot", label="Replot", icon=shiny::icon("exclamation-triangle"))
+    updateActionButton(session, "replot", 
+                       label=button_labels$replot, 
+                       icon=shiny::icon("exclamation-triangle"))
   })
   
-  observeEvent(input$replot, {updateActionButton(session, "replot", "Up-to-date", icon=shiny::icon("check-circle"))})
+  observeEvent(input$replot, {updateActionButton(session, "replot", 
+                                                 label=button_labels$ok,
+                                                 icon=shiny::icon("check-circle"))})
   
   delayed_price_paths_plot <- eventReactive(input$replot, {
     price_paths() %>% 

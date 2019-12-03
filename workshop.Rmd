@@ -456,7 +456,39 @@ shinyApp(ex3_ui, ex3_server_reactive)
 ```
 
 
+# Scalable and production-ready applications
 
+To create robust applications it is important that your code is clean and well organizied and doesn't break on any changes.
+
+Therefore, as applications get bigger and more complex, you need 
+
+* modular code
+* automated testing
+
+Especially for a reactive user interface application like Shiny, testing can be very time consuming.
+
+## Shinytest
+
+The *shinytest* package offers an automated testing based on a scripted interaction with the application.
+
+In addition to the package, you need the external application *phantomJS* installed and in your path.
+
+```{r echo=TRUE, eval=FALSE}
+install.packages("shinytest")
+
+shinytest::installDependencies()
+```
+
+
+The workflow is as follows
+
+1. Record a test:  
+  Interact with the application and define relevant snapshots to take
+2. Run the test the first time:  
+  shinytest applies your recorded test script to store the expected results (state of the application data, screenshots)
+3. Re-Run the test:  
+  shinytest applies your recorded test script and compares the results with expectations
+  
 
 
 # Ressources
