@@ -516,11 +516,6 @@ Therefore, as applications get bigger and more complex, you need
 * automated testing
 
 
-## Modules
-
- TODO
-
-
 ## Shinytest
 
 Especially for a reactive user interface application like Shiny, testing can be very time consuming. The *shinytest* package offers an automated testing based on a scripted interaction with the application.
@@ -543,7 +538,59 @@ The workflow is as follows
 3. Re-Run the test:  
   shinytest applies your recorded test script and compares the results with expectations
   
+  
+## Modules
 
+So far, all UI definitions as well as the server functionality was put into one *app.R* file. With a growing code base this is hard to understand and hard to maintain.
+
+With the modules framework of Shiny you can package pieces of UI and functionality, which belong together. This gives you
+
+* structured code giving a top-down view (high level to detailed) on your application
+* separated code for distributed development
+* reusable code within and across applications for common, but complex UI elements
+
+UI-side:  `moduleInput(namespace)`
+Server-side:  `callModule(moduleFunctionality, namespace)`
+
+```{r}
+
+library(shiny)
+library(dplyr)
+
+
+ui <- fluidPage(style=page_style,
+                ex4_moduleInput("mc_stock_input"),
+                ex4_moduleOutput("mc_stock_output"))
+
+server <- function(input, output, session) {
+  price_paths <- callModule(ex4_calc_paths, "mc_stock_input")
+  callModule(ex4_plot, "mc_stock_output",
+             price_paths=price_paths)
+}
+
+shinyApp(ui=ui, server = server)
+
+
+```
+
+  
+## Deployment auf Shinyapps.io
+
+Shinyapps.io ist eine Hosting Plattform für Shiny Apps.
+Man kann sie frei als auch kommerziell nutzen.
+Wir werden diese Plattform nutzen, um eine App hochzuladen.
+
+Folgende Schritte sind dafür notwendig:
+
+* Shinyapps.io aufrufen im Browser und Account anlegen 
+* https://www.shinyapps.io/admin/#/tokens aufrufen
+
+
+```{r echo=TRUE, eval=FALSE}
+install.packages('rsconnect')
+rsconnect::setAccountInfo(name="<ACCOUNT>", token="<TOKEN>", secret="<SECRET>")
+#rsconnect::deployApp()
+```
 
 # Ressources
 
@@ -555,7 +602,7 @@ The workflow is as follows
 
 # Backup
 
-
+## Conditional panels
 
 ```{r}
 
