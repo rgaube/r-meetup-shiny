@@ -3,11 +3,12 @@ title: "R/Shiny Workshop"
 author: "Daniel Krieg"
 date: "10. Dezember 2019"
 output: 
-  rmdformats::material:
-    highlight: kate
-    css: style.css
   html_document:
     css: style.css
+  rmdformats::readthedown:
+    highlight: kate
+    css: style.css
+
 runtime: shiny
 ---
 
@@ -21,7 +22,7 @@ source("solutions.R", local=TRUE)
 
 ## What is Shiny
 
-A shiny app is a webbased user interface, which is created and connected to an active R session.
+A shiny app is a webbased user interface, which is created by and connected to an active R session.
 The session can react to user interaction and create/update content interactively.
 
 ### Pros
@@ -32,10 +33,17 @@ The session can react to user interaction and create/update content interactivel
 * Can also be scaled for complex applications
 * Use the full power of R for data processing and graphics
 
+## Workshop
+
+This workshop is based on an R Markdown Notebook, which allows to mix text, r scripts and shiny apps in one file.
+
+I will walk you through the generated output, while you can execute and play with the code.
+Just hit the run button from the r code chunks: 
+<img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACgAAAAaCAYAAADFTB7LAAAAa0lEQVR42u3OywnAIBBAwcXSUoCW5D11xDoNCBGNv0MOecJOBSOi1OZMsJ4dvFxEJ1OQnMxBarIKEpNNkJbsBknJYZCSnAYJyVVQziNig7/nZkFEbhTE5HpBVO4dxOXKIDL3BLG5BJ1T6rsbMfep2CaMN00AAAAASUVORK5CYII=" width="20" height="13"  title="Run Current Chunk" style="display: inline-block; margin: 0">
+
+
 
 ## Preparation
-
-
 
 ```{r echo=TRUE, eval=FALSE}
 
@@ -55,10 +63,8 @@ install.packages("rsconnect")
 # Dashboard layout for Shiny
 install.packages("shinydashboard")
 
-# Themes for markdown document
+# Optional: Themes for markdown document
 remotes::install_github("juba/rmdformats")
-# Themes for dashboards
-remotes::install_github("nik01010/dashboardthemes")
 ```
 
 
