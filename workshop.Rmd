@@ -152,7 +152,7 @@ Start by constructing the inputs first:
 library(shiny)
 library(dplyr)
 
-shinyApp(ex1_ui, function(...){})
+shinyApp(ex1_ui(), function(...){})
 
 ```
 
@@ -221,7 +221,7 @@ price_paths <- simulate_paths(iterations, mean_return, volatility)
 library(shiny)
 library(dplyr)
 
-shinyApp(ex1_ui, ex1_server_fixed)
+shinyApp(ex1_ui(), ex1_server_fixed)
 
 ```
 
@@ -310,7 +310,7 @@ Put the inputs side by side (Hint: use `column`) and the outputs in tabs (Hint: 
 library(shiny)
 library(dplyr)
 
-shinyApp(ex2_ui, ex1_server_fixed)
+shinyApp(ex2_ui(), ex1_server_fixed)
 
 ```
 
@@ -462,7 +462,7 @@ Reuse the monte carlo example, but this time create a reactive conducter, which 
 library(shiny)
 library(dplyr)
 
-shinyApp(ex2_ui, ex1_server_reactive)
+shinyApp(ex2_ui(), ex1_server_reactive)
 
 
 ```
@@ -506,7 +506,7 @@ Add a button to refresh the paths if the inputs change.
 library(shiny)
 library(dplyr)
 
-shinyApp(ex3_ui, ex3_server_reactive)
+shinyApp(ex3_ui(), ex3_server_reactive)
 
 
 ```
@@ -555,7 +555,7 @@ With the modules framework of Shiny you can package pieces of UI and functionali
 * separated code for distributed development
 * reusable code within and across applications for common, but complex UI elements
 
-UI-side:  `moduleInput(namespace)`
+UI-side:  `moduleInput(namespace)`  
 Server-side:  `callModule(moduleFunctionality, namespace)`
 
 ```{r}

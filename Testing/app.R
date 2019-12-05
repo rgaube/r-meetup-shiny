@@ -16,4 +16,4 @@ source("../solutions.R", local=TRUE)
 # button_labels <- list(replot="Replot it", ok="Plot is fine")
 
 # Run the application 
-shinyApp(ui = ex3_ui, server = ex3_server_reactive)
+shinyApp(ui = ex3_ui(), server = ex3_server_reactive)

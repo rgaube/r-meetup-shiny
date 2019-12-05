@@ -10,7 +10,7 @@ page_style <- "background-color:rgb(0,170,112,0.3);"
 
 
 
-#### Example 1: Monte Carlo stock price evolution
+#### Example: Monte Carlo stock price evolution ####
 
 draw_price_path <- function(mean_return, volatility, 
                             start=100, 
@@ -34,48 +34,58 @@ simulate_paths <- function(iterations, mean_return, volatility) {
 }
 
 
-ex1_ui <- fluidPage(style=page_style,
-  fluidRow(h2("Inputs"),
-           sliderInput("mean_return", "Mean return", min=0, max=1, value=0.05),
-           sliderInput("volatility", "Volatility", min=0, max=0.5, value=0.1),
-           sliderInput("iterations", "Iterations", min=1, max=1000, value=100)
-  ),
-  fluidRow(h2("Outputs"),
-           plotOutput("paths"),
-           plotOutput("distribution"),
-           tableOutput("distribution_summary"))
-)
+#### Example: UI ####
 
-ex2_ui <- fluidPage(style=page_style,
-                    fluidRow(h2("Inputs"),
-                             column(4,sliderInput("mean_return", "Mean return", min=0, max=1, value=0.05)),
-                             column(4,sliderInput("volatility", "Volatility", min=0, max=0.5, value=0.1)),
-                             column(4,sliderInput("iterations", "Iterations", min=1, max=1000, value=100))
-                    ),
-                    fluidRow(h2("Outputs"),
-                             tabsetPanel(
-                               tabPanel("Paths", plotOutput("paths")),
-                               tabPanel("Distribution", plotOutput("distribution")),
-                               tabPanel("Summary", tableOutput("distribution_summary")))
-                    )
-)
+ex1_ui <- function() {
+  fluidPage(style=page_style,
+            fluidRow(h2("Inputs"),
+                     sliderInput("mean_return", "Mean return", min=0, max=1, value=0.05),
+                     sliderInput("volatility", "Volatility", min=0, max=0.5, value=0.1),
+                     sliderInput("iterations", "Iterations", min=1, max=1000, value=100)
+            ),
+            fluidRow(h2("Outputs"),
+                     plotOutput("paths"),
+                     plotOutput("distribution"),
+                     tableOutput("distribution_summary"))
+  )
+}
 
-ex3_ui <- fluidPage(style=page_style,
-                    fluidRow(h2("Inputs"),
-                             column(4,sliderInput("mean_return", "Mean return", min=0, max=1, value=0.05)),
-                             column(4,sliderInput("volatility", "Volatility", min=0, max=0.5, value=0.1)),
-                             column(4,sliderInput("iterations", "Iterations", min=1, max=1000, value=100))
-                    ),
-                    fluidRow(h2("Outputs"),
-                             tabsetPanel(
-                               tabPanel("Paths", 
-                                        actionButton("replot", " ", icon("exclamation-triangle")),
-                                        plotOutput("paths")),
-                               tabPanel("Distribution", plotOutput("distribution")),
-                               tabPanel("Summary", tableOutput("distribution_summary")))
-                    )
-)
+ex2_ui <- function() {
+  fluidPage(style=page_style,
+            fluidRow(h2("Inputs"),
+                     column(4,sliderInput("mean_return", "Mean return", min=0, max=1, value=0.05)),
+                     column(4,sliderInput("volatility", "Volatility", min=0, max=0.5, value=0.1)),
+                     column(4,sliderInput("iterations", "Iterations", min=1, max=1000, value=100))
+            ),
+            fluidRow(h2("Outputs"),
+                     tabsetPanel(
+                       tabPanel("Paths", plotOutput("paths")),
+                       tabPanel("Distribution", plotOutput("distribution")),
+                       tabPanel("Summary", tableOutput("distribution_summary")))
+            )
+  )
+}
 
+ex3_ui <- function() {
+  fluidPage(style=page_style,
+            fluidRow(h2("Inputs"),
+                     column(4,sliderInput("mean_return", "Mean return", min=0, max=1, value=0.05)),
+                     column(4,sliderInput("volatility", "Volatility", min=0, max=0.5, value=0.1)),
+                     column(4,sliderInput("iterations", "Iterations", min=1, max=1000, value=100))
+            ),
+            fluidRow(h2("Outputs"),
+                     tabsetPanel(
+                       tabPanel("Paths", 
+                                actionButton("replot", " ", icon("exclamation-triangle")),
+                                plotOutput("paths")),
+                       tabPanel("Distribution", plotOutput("distribution")),
+                       tabPanel("Summary", tableOutput("distribution_summary")))
+            )
+  )
+}
+  
+
+#### Example: Server functions ####
 
 ex1_server_fixed <- function(input, output, session) {
   
@@ -218,7 +228,7 @@ ex3_server_reactive <- function(input, output, session) {
 
 
 
-###########
+#### Example: Modules ####
 
 
 ex4_moduleInput <- function(id) {
