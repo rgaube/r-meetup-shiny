@@ -47,6 +47,9 @@ Just hit the run button from the r code chunks:
 
 ```{r echo=TRUE, eval=FALSE}
 
+# Basics
+install.packages(c("tidyverse", "lubridate"))
+
 # Shiny
 install.packages("shiny")
 
