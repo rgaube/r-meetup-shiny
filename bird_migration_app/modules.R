@@ -21,7 +21,8 @@ birdSelectionInput <- function(id) {
                     max = t_day,
                     value=c(t_day, t_day),
                     
-                    timeFormat="%Y-%m-%d"))
+                    timeFormat="%Y-%m-%d")),
+      infoBox("Data source", value="DOI 10.5441/001/1.v1cs4nn0", subtitle = "movebank.org")
       )
   )
 }
