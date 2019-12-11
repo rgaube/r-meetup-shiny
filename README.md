@@ -9,13 +9,10 @@ Agenda:
 - Visualisierungen (ggplot2, leaflet)
 - Modularisierung
 
-Alle die aktiv an dem Workshop teilnehmen wollen bitte ich einen Laptop mitzubringen mit installiertem R und Rstudio und folgenden Paketen:
-
-- tidyverse
-- shiny
-- shinydashboard
-- rmarkdown
-- ggplot2
-- leaflet
+Alle die aktiv an dem Workshop teilnehmen wollen bitte ich einen Laptop mitzubringen mit installiertem R und Rstudio.
+Die benötigten Pakete findet ihr in der `install.R`.
 
 Falls ihr Probleme mit der Einrichtung habt, gebt mir am besten vorab Bescheid.
+
+Oder startet das Projekt direkt in Binder:
+[![Binder](https://mybinder.org/badge_logo.svg)](https://mybinder.org/v2/gl/r-meetup-frankfurt%2F2019-12-shiny/master?filepath=workshop.Rmd)
