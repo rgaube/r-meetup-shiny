@@ -3,6 +3,7 @@ install.packages(c("tidyverse", "lubridate"))
 
 # Shiny
 install.packages("shiny")
+install.packages("shinycssloaders")
 
 # Datatable: Nice interactive tables
 install.packages("DT")
