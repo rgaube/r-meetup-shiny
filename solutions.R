@@ -77,7 +77,8 @@ ex3_ui <- function() {
                      tabsetPanel(
                        tabPanel("Paths", 
                                 actionButton("replot", " ", icon("exclamation-triangle")),
-                                plotOutput("paths")),
+                                plotOutput("paths") %>% 
+                                  shinycssloaders::withSpinner()),
                        tabPanel("Distribution", plotOutput("distribution")),
                        tabPanel("Summary", tableOutput("distribution_summary")))
             )
@@ -205,8 +206,8 @@ ex3_server_reactive <- function(input, output, session) {
   })
   
   output$paths <- renderPlot({
-    delayed_price_paths_plot()
-    })
+    delayed_price_paths_plot() 
+  }) 
   
   output$distribution <- renderPlot({
     price_paths() %>% 
@@ -251,7 +252,8 @@ ex4_moduleOutput <- function(id) {
              tabsetPanel(
                tabPanel("Paths", 
                         actionButton(ns("replot"), " ", icon("exclamation-triangle")),
-                        plotOutput(ns("paths"))),
+                        plotOutput(ns("paths")) %>%
+                          shinycssloaders::withSpinner()),
                tabPanel("Distribution", plotOutput(ns("distribution"))),
                tabPanel("Summary", tableOutput(ns("distribution_summary"))))
     )

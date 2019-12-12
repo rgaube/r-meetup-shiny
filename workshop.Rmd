@@ -503,6 +503,15 @@ Add a button to refresh the paths if the inputs change.
 
 *Hint*: Start with the button and toggle its state. Then use the button for updating the plot.
 
+Using the package `shinycssloaders`, we can even display a spinner while the output is loaded/created:
+
+```
+plotOutput("paths") %>% 
+  shinycssloaders::withSpinner()
+                          
+```
+
+
 ```{r}
 
 
