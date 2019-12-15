@@ -1,3 +1,5 @@
+Dieses Repository ist ein Import des folgenden Repositories von Daniel Krieg: https://gitlab.com/r-meetup-frankfurt/2019-12-shiny
+
 # Shiny-Workshop: Interaktive Web-Frontends mit R
 
 In diesem Workshop zeigen wir euch wie ihr mit R/Shiny eure Analysen interaktiv gestaltet und auch online veröffentlichen könnt.
